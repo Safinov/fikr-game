@@ -5,8 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>فكر - لعبة الأسئلة العائلية</title>
   <meta name="description" content="فكر - لعبة ثقافية جماعية مستوحاة من طربع. اختبر معلوماتك مع عائلتك وأصدقائك في أسئلة من فئات متنوعة وصور ومقاطع موسيقية.">
+
+  <!-- SEO / Social -->
+  <meta property="og:title" content="فكر - لعبة الأسئلة العائلية">
+  <meta property="og:description" content="لعبة ثقافية جماعية — اختبر معلوماتك مع عائلتك وأصدقائك في +500 سؤال من 20 فئة متنوعة">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://your-domain.com/og-image.png">
+  <meta property="og:locale" content="ar_SA">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#0D0D14">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -31,6 +45,26 @@
       overflow-x: hidden;
     }
 
+    /* ===== SKIP LINK (accessibility) ===== */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      right: 0;
+      background: var(--gold);
+      color: var(--bg-dark);
+      padding: 12px 24px;
+      z-index: 200;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 0 0 0 12px;
+      transition: top 0.2s;
+    }
+    .skip-link:focus {
+      top: 0;
+      outline: 2px solid var(--gold-light);
+      outline-offset: 2px;
+    }
+
     /* ===== PARTICLE CANVAS ===== */
     #particles-canvas {
       position: fixed;
@@ -49,10 +83,6 @@
       from { opacity: 0; transform: translateY(-30px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    @keyframes scaleIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
     @keyframes shimmer {
       0% { background-position: -200% center; }
       100% { background-position: 200% center; }
@@ -65,26 +95,9 @@
       0%, 100% { box-shadow: 0 0 20px rgba(212,168,67,0.15); }
       50% { box-shadow: 0 0 40px rgba(212,168,67,0.35); }
     }
-    @keyframes rotate-slow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    @keyframes border-dance {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
     @keyframes counter-up {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slideInRight {
-      from { opacity: 0; transform: translateX(60px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes slideInLeft {
-      from { opacity: 0; transform: translateX(-60px); }
-      to { opacity: 1; transform: translateX(0); }
     }
 
     .reveal {
@@ -103,6 +116,23 @@
     .reveal-delay-5 { transition-delay: 0.5s; }
     .reveal-delay-6 { transition-delay: 0.6s; }
 
+    /* ===== REDUCED MOTION ===== */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      #particles-canvas {
+        display: none;
+      }
+    }
+
     /* ===== NAV ===== */
     nav {
       display: flex;
@@ -117,10 +147,10 @@
       backdrop-filter: blur(20px) saturate(1.2);
       animation: fadeInDown 0.8s ease-out;
     }
-    .nav-logo { 
-      font-size: 26px; 
-      font-weight: 900; 
-      color: var(--gold); 
+    .nav-logo {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--gold);
       letter-spacing: 4px;
       position: relative;
       cursor: pointer;
@@ -142,10 +172,10 @@
       transform: scaleX(1);
     }
     .nav-links { display: flex; gap: 28px; }
-    .nav-links a { 
-      color: var(--text-muted); 
-      text-decoration: none; 
-      font-size: 14px; 
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
       transition: all 0.3s;
       position: relative;
       padding: 4px 0;
@@ -158,18 +188,23 @@
       background: var(--gold);
       transition: width 0.3s;
     }
-    .nav-links a:hover { 
-      color: var(--gold); 
+    .nav-links a:hover {
+      color: var(--gold);
     }
     .nav-links a:hover::after {
       width: 100%;
+    }
+    .nav-links a:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 4px;
+      border-radius: 4px;
     }
 
     /* ===== HERO ===== */
     .hero {
       text-align: center;
       padding: 120px 20px 100px;
-      background: 
+      background:
         radial-gradient(ellipse at 50% 0%, rgba(212,168,67,0.12) 0%, transparent 60%),
         radial-gradient(ellipse at 80% 50%, rgba(212,168,67,0.04) 0%, transparent 50%);
       border-bottom: 1px solid rgba(212,168,67,0.1);
@@ -206,7 +241,7 @@
       letter-spacing: 14px;
       line-height: 1;
       margin-bottom: 20px;
-      text-shadow: 
+      text-shadow:
         0 0 60px rgba(212,168,67,0.2),
         0 0 120px rgba(212,168,67,0.1);
       animation: fadeInUp 1s ease-out 0.3s both;
@@ -230,9 +265,9 @@
       margin: 20px 0 32px;
       animation: fadeInUp 0.8s ease-out 0.5s both;
     }
-    .hero-divider .line { 
-      width: 80px; 
-      height: 1px; 
+    .hero-divider .line {
+      width: 80px;
+      height: 1px;
       background: linear-gradient(to left, transparent, var(--gold), transparent);
       position: relative;
       overflow: hidden;
@@ -245,29 +280,31 @@
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
       animation: shimmer 3s infinite;
     }
-    .hero-divider .line.r { background: linear-gradient(to right, transparent, var(--gold), transparent); }
+    .hero-divider .line.r {
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
     .hero-divider .line.r::after {
       left: auto; right: -100%;
       animation: shimmer 3s infinite 1.5s;
     }
-    .hero-divider span { 
-      color: var(--text-muted); 
-      font-size: 14px; 
+    .hero-divider span {
+      color: var(--text-muted);
+      font-size: 14px;
       letter-spacing: 4px;
       font-weight: 600;
     }
-    .hero p { 
-      color: var(--text-muted); 
-      font-size: 18px; 
-      max-width: 580px; 
-      margin: 0 auto 48px; 
+    .hero p {
+      color: var(--text-muted);
+      font-size: 18px;
+      max-width: 580px;
+      margin: 0 auto 48px;
       line-height: 1.9;
       animation: fadeInUp 0.8s ease-out 0.6s both;
     }
-    .hero-buttons { 
-      display: flex; 
-      gap: 16px; 
-      justify-content: center; 
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
       flex-wrap: wrap;
       animation: fadeInUp 0.8s ease-out 0.7s both;
     }
@@ -292,7 +329,7 @@
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
       transition: left 0.5s;
     }
-    .btn-primary:hover { 
+    .btn-primary:hover {
       transform: translateY(-3px) scale(1.02);
       box-shadow: 0 8px 30px rgba(212,168,67,0.5);
     }
@@ -302,15 +339,21 @@
     .btn-primary:active {
       transform: translateY(-1px) scale(0.98);
     }
+    .btn-primary:focus-visible,
+    .btn-secondary:focus-visible,
+    .android-btn:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 4px;
+    }
     .btn-secondary {
       display: inline-flex; align-items: center; gap: 10px;
-      background: rgba(212,168,67,0.06); 
+      background: rgba(212,168,67,0.06);
       color: var(--gold);
       font-weight: 600; font-size: 15px;
       padding: 16px 36px; border-radius: 16px;
-      text-decoration: none; 
+      text-decoration: none;
       border: 1.5px solid rgba(212,168,67,0.25);
-      cursor: pointer; 
+      cursor: pointer;
       transition: all 0.3s;
       position: relative;
       overflow: hidden;
@@ -324,7 +367,7 @@
       transition: width 0.3s;
       z-index: -1;
     }
-    .btn-secondary:hover { 
+    .btn-secondary:hover {
       border-color: rgba(212,168,67,0.5);
       background: rgba(212,168,67,0.12);
       transform: translateY(-2px);
@@ -352,9 +395,9 @@
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
       opacity: 0.5;
     }
-    .stat-item { 
-      background: var(--bg-dark); 
-      padding: 40px 20px; 
+    .stat-item {
+      background: var(--bg-dark);
+      padding: 40px 20px;
       text-align: center;
       position: relative;
       transition: background 0.3s;
@@ -374,10 +417,10 @@
     .stat-item:hover::after {
       width: 40%;
     }
-    .stat-number { 
-      font-size: 42px; 
-      font-weight: 900; 
-      color: var(--gold); 
+    .stat-number {
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--gold);
       display: block;
       line-height: 1;
       background: linear-gradient(180deg, var(--gold), var(--gold-light));
@@ -388,54 +431,54 @@
     .stat-number.counting {
       animation: counter-up 0.6s ease-out;
     }
-    .stat-label { 
-      font-size: 14px; 
-      color: var(--text-muted); 
+    .stat-label {
+      font-size: 14px;
+      color: var(--text-muted);
       margin-top: 8px;
       font-weight: 500;
     }
 
     /* ===== SECTIONS ===== */
-    section { 
-      padding: 100px 40px; 
-      max-width: 1100px; 
+    section {
+      padding: 100px 40px;
+      max-width: 1100px;
       margin: 0 auto;
       position: relative;
     }
-    .section-label { 
-      color: var(--gold); 
-      font-size: 12px; 
-      letter-spacing: 4px; 
-      margin-bottom: 12px; 
+    .section-label {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 4px;
+      margin-bottom: 12px;
       display: block;
       font-weight: 700;
       text-transform: uppercase;
     }
-    .section-title { 
-      font-size: 36px; 
-      font-weight: 900; 
-      color: var(--text-primary); 
+    .section-title {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--text-primary);
       margin-bottom: 14px;
       line-height: 1.2;
     }
-    .section-sub { 
-      color: var(--text-muted); 
-      font-size: 16px; 
-      line-height: 1.85; 
-      margin-bottom: 56px; 
+    .section-sub {
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1.85;
+      margin-bottom: 56px;
       max-width: 580px;
     }
 
     /* ===== FEATURES ===== */
-    .features-grid { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-      gap: 20px; 
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
     }
     .feature-card {
       background: var(--bg-card);
       border: 1px solid rgba(212,168,67,0.1);
-      border-radius: 20px; 
+      border-radius: 20px;
       padding: 32px 28px;
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
@@ -451,10 +494,10 @@
       transform: scaleX(0);
       transition: transform 0.4s;
     }
-    .feature-card:hover { 
-      border-color: rgba(212,168,67,0.35); 
+    .feature-card:hover {
+      border-color: rgba(212,168,67,0.35);
       transform: translateY(-6px);
-      box-shadow: 
+      box-shadow:
         0 20px 40px rgba(0,0,0,0.3),
         0 0 60px rgba(212,168,67,0.08);
     }
@@ -474,29 +517,29 @@
       transform: scale(1.1) rotate(-5deg);
       box-shadow: 0 0 20px rgba(212,168,67,0.2);
     }
-    .feature-title { 
-      font-size: 18px; 
-      font-weight: 700; 
-      color: var(--text-primary); 
+    .feature-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
       margin-bottom: 10px;
     }
-    .feature-desc { 
-      font-size: 14px; 
-      color: var(--text-muted); 
+    .feature-desc {
+      font-size: 14px;
+      color: var(--text-muted);
       line-height: 1.8;
     }
 
     /* ===== CATEGORIES ===== */
-    .categories-grid { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
-      gap: 16px; 
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 16px;
     }
     .cat-card {
       background: var(--bg-card);
       border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 20px; 
-      padding: 32px 16px; 
+      border-radius: 20px;
+      padding: 32px 16px;
       text-align: center;
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
@@ -511,7 +554,7 @@
       background: linear-gradient(to top, rgba(212,168,67,0.1), transparent);
       transition: height 0.4s;
     }
-    .cat-card:hover { 
+    .cat-card:hover {
       transform: translateY(-8px) scale(1.03);
       border-color: rgba(212,168,67,0.3);
       box-shadow: 0 15px 35px rgba(0,0,0,0.3);
@@ -519,9 +562,9 @@
     .cat-card:hover::after {
       height: 60%;
     }
-    .cat-icon { 
-      font-size: 36px; 
-      display: block; 
+    .cat-icon {
+      font-size: 36px;
+      display: block;
       margin-bottom: 14px;
       transition: transform 0.3s;
       filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
@@ -529,8 +572,8 @@
     .cat-card:hover .cat-icon {
       transform: scale(1.2) rotate(5deg);
     }
-    .cat-name { 
-      font-size: 14px; 
+    .cat-name {
+      font-size: 14px;
       color: var(--text-muted);
       font-weight: 600;
       position: relative;
@@ -538,16 +581,16 @@
     }
 
     /* ===== HOW TO PLAY ===== */
-    .steps { 
-      display: flex; 
-      flex-direction: column; 
-      gap: 18px; 
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
     .step {
       display: flex; align-items: flex-start; gap: 24px;
-      background: var(--bg-card); 
+      background: var(--bg-card);
       border: 1px solid rgba(212,168,67,0.1);
-      border-radius: 20px; 
+      border-radius: 20px;
       padding: 28px 32px;
       transition: all 0.4s;
       position: relative;
@@ -575,7 +618,7 @@
       min-width: 48px; height: 48px; border-radius: 14px;
       background: linear-gradient(135deg, var(--gold), var(--gold-light));
       color: var(--bg-dark); font-weight: 900; font-size: 18px;
-      display: flex; align-items: center; justify-content: center; 
+      display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
       box-shadow: 0 4px 15px rgba(212,168,67,0.3);
       transition: transform 0.3s;
@@ -583,15 +626,15 @@
     .step:hover .step-num {
       transform: scale(1.1) rotate(-5deg);
     }
-    .step-text h3 { 
-      font-size: 17px; 
-      font-weight: 700; 
-      color: var(--text-primary); 
+    .step-text h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
       margin-bottom: 6px;
     }
-    .step-text p { 
-      font-size: 14px; 
-      color: var(--text-muted); 
+    .step-text p {
+      font-size: 14px;
+      color: var(--text-muted);
       line-height: 1.8;
     }
 
@@ -599,19 +642,19 @@
     .download-section {
       background: var(--bg-card);
       border: 1.5px solid rgba(212,168,67,0.25);
-      border-radius: 32px; 
+      border-radius: 32px;
       padding: 80px 40px;
-      text-align: center; 
+      text-align: center;
       margin: 0 40px 100px;
-      position: relative; 
+      position: relative;
       overflow: hidden;
-      box-shadow: 
+      box-shadow:
         0 0 80px rgba(212,168,67,0.06),
         inset 0 1px 0 rgba(255,255,255,0.03);
     }
     .download-section::before {
       content: '';
-      position: absolute; 
+      position: absolute;
       top: -100px; left: 50%;
       transform: translateX(-50%);
       width: 500px; height: 500px;
@@ -627,24 +670,24 @@
       opacity: 0.5;
       pointer-events: none;
     }
-    .download-emoji { 
-      font-size: 64px; 
-      margin-bottom: 24px; 
+    .download-emoji {
+      font-size: 64px;
+      margin-bottom: 24px;
       display: block;
       animation: float 3s ease-in-out infinite;
       filter: drop-shadow(0 10px 20px rgba(212,168,67,0.2));
     }
-    .download-section h2 { 
-      font-size: 34px; 
-      font-weight: 900; 
-      margin-bottom: 14px; 
+    .download-section h2 {
+      font-size: 34px;
+      font-weight: 900;
+      margin-bottom: 14px;
       color: var(--text-primary);
       position: relative;
       z-index: 1;
     }
-    .download-section p { 
-      color: var(--text-muted); 
-      font-size: 17px; 
+    .download-section p {
+      color: var(--text-muted);
+      font-size: 17px;
       margin-bottom: 40px;
       position: relative;
       z-index: 1;
@@ -668,7 +711,7 @@
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
       transition: left 0.6s;
     }
-    .android-btn:hover { 
+    .android-btn:hover {
       transform: translateY(-4px) scale(1.03);
       box-shadow: 0 12px 40px rgba(212,168,67,0.5);
     }
@@ -676,23 +719,23 @@
       left: 100%;
     }
     .android-btn svg { width: 26px; height: 26px; fill: var(--bg-dark); }
-    .download-note { 
-      font-size: 13px; 
-      color: var(--text-faint); 
+    .download-note {
+      font-size: 13px;
+      color: var(--text-faint);
       margin-top: 24px;
       position: relative;
       z-index: 1;
     }
 
     /* ===== GOLD DIVIDER ===== */
-    hr.gold { 
-      border: none; 
-      border-top: 1px solid rgba(212,168,67,0.1); 
+    hr.gold {
+      border: none;
+      border-top: 1px solid rgba(212,168,67,0.1);
       margin: 0 40px;
       position: relative;
     }
     hr.gold::after {
-      content: '◆';
+      content: '\u25C6';
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
@@ -706,7 +749,7 @@
     footer {
       background: #09090F;
       border-top: 1px solid rgba(212,168,67,0.1);
-      padding: 48px 40px; 
+      padding: 48px 40px;
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -719,24 +762,24 @@
       width: 200px; height: 1px;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
     }
-    .footer-logo { 
-      font-size: 28px; 
-      font-weight: 900; 
-      color: var(--gold); 
-      letter-spacing: 6px; 
+    .footer-logo {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 6px;
       margin-bottom: 16px;
       text-shadow: 0 0 30px rgba(212,168,67,0.2);
     }
-    .footer-links { 
-      display: flex; 
-      gap: 28px; 
-      justify-content: center; 
-      margin-bottom: 18px; 
+    .footer-links {
+      display: flex;
+      gap: 28px;
+      justify-content: center;
+      margin-bottom: 18px;
     }
-    .footer-links a { 
-      color: var(--text-faint); 
-      text-decoration: none; 
-      font-size: 14px; 
+    .footer-links a {
+      color: var(--text-faint);
+      text-decoration: none;
+      font-size: 14px;
       transition: all 0.3s;
       position: relative;
     }
@@ -748,26 +791,31 @@
       background: var(--gold);
       transition: width 0.3s;
     }
-    .footer-links a:hover { 
-      color: var(--text-muted); 
+    .footer-links a:hover {
+      color: var(--text-muted);
     }
     .footer-links a:hover::after {
       width: 100%;
     }
-    .footer-copy { 
-      font-size: 13px; 
-      color: #3A3830; 
+    .footer-links a:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+    .footer-copy {
+      font-size: 13px;
+      color: #3A3830;
     }
 
     /* ===== SCROLLBAR ===== */
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg-dark); }
-    ::-webkit-scrollbar-thumb { 
-      background: rgba(212,168,67,0.3); 
+    ::-webkit-scrollbar-thumb {
+      background: rgba(212,168,67,0.3);
       border-radius: 4px;
     }
-    ::-webkit-scrollbar-thumb:hover { 
-      background: rgba(212,168,67,0.5); 
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(212,168,67,0.5);
     }
 
     /* ===== RESPONSIVE ===== */
@@ -788,18 +836,22 @@
       .stat-number { font-size: 32px; }
       .features-grid { grid-template-columns: 1fr; }
       .categories-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
     }
   </style>
-<base target="_blank">
 </head>
 <body>
 
+<!-- SKIP LINK -->
+<a href="#features" class="skip-link">تخطي إلى المحتوى</a>
+
 <!-- PARTICLES CANVAS -->
-<canvas id="particles-canvas"></canvas>
+<canvas id="particles-canvas" aria-hidden="true"></canvas>
 
 <!-- NAV -->
-<nav>
-  <div class="nav-logo">فكر</div>
+<nav role="navigation" aria-label="القائمة الرئيسية">
+  <div class="nav-logo" tabindex="0">فكر</div>
   <div class="nav-links">
     <a href="#features">المميزات</a>
     <a href="#categories">الفئات</a>
@@ -820,7 +872,7 @@
   <p>لعبة ثقافية جماعية مستوحاة من طربع — اختبر معلوماتك مع عائلتك وأصدقائك في أسئلة من فئات متنوعة وصور ومقاطع موسيقية</p>
   <div class="hero-buttons">
     <a href="#download" class="btn-primary">
-      <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#0D0D14">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#0D0D14" aria-hidden="true">
         <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0001.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0225 3.503C15.5902 8.4799 13.853 7.9401 12 7.9401c-1.853 0-3.5902.5398-5.1367 1.4699L4.841 5.907a.4161.4161 0 00-.5677-.1521.4156.4156 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589.3432 18.6617h23.3136c0-4.0028-2.3457-7.475-5.7755-9.3403"/>
       </svg>
       تحميل للأندرويد
@@ -830,21 +882,21 @@
 </div>
 
 <!-- STATS -->
-<div class="stats">
+<div class="stats" role="region" aria-label="إحصائيات اللعبة">
   <div class="stat-item reveal">
     <span class="stat-number" data-target="500">+500</span>
     <div class="stat-label">سؤال متنوع</div>
   </div>
   <div class="stat-item reveal reveal-delay-1">
-    <span class="stat-number" data-target="8">8</span>
-    <div class="stat-label">فئات مختلفة</div>
+    <span class="stat-number" data-target="20">20</span>
+    <div class="stat-label">فئة مختلفة</div>
   </div>
   <div class="stat-item reveal reveal-delay-2">
-    <span class="stat-number" data-target="3">3</span>
-    <div class="stat-label">مستويات صعوبة</div>
+    <span class="stat-number" data-target="6">6</span>
+    <div class="stat-label">فئات لكل جولة</div>
   </div>
   <div class="stat-item reveal reveal-delay-3">
-    <span class="stat-number">∞</span>
+    <span class="stat-number">&infin;</span>
     <div class="stat-label">جلسات لا تتكرر</div>
   </div>
 </div>
@@ -856,32 +908,32 @@
   <p class="section-sub reveal reveal-delay-2">مصممة للعب الجماعي مع العائلة والأصدقاء — بواجهة أنيقة وأسئلة ذكية تحافظ على التشويق</p>
   <div class="features-grid">
     <div class="feature-card reveal reveal-delay-1">
-      <div class="feature-icon">🖼️</div>
+      <div class="feature-icon" aria-hidden="true">&#128444;&#65039;</div>
       <div class="feature-title">أسئلة بالصور</div>
       <p class="feature-desc">أسئلة الأعلام والحيوانات والشخصيات مع صور عالية الجودة تضيف متعة بصرية للعبة</p>
     </div>
     <div class="feature-card reveal reveal-delay-2">
-      <div class="feature-icon">🎵</div>
+      <div class="feature-icon" aria-hidden="true">&#127925;</div>
       <div class="feature-title">أسئلة موسيقية</div>
       <p class="feature-desc">اسمع مقطعاً موسيقياً واخمن الأغنية أو المغني — تجربة صوتية فريدة داخل اللعبة</p>
     </div>
     <div class="feature-card reveal reveal-delay-3">
-      <div class="feature-icon">🔄</div>
+      <div class="feature-icon" aria-hidden="true">&#128260;</div>
       <div class="feature-title">لا تكرار للأسئلة</div>
       <p class="feature-desc">يحفظ التطبيق الأسئلة المشاهدة تلقائياً — لن تتكرر نفس الأسئلة حتى بعد إغلاق التطبيق</p>
     </div>
     <div class="feature-card reveal reveal-delay-4">
-      <div class="feature-icon">👑</div>
+      <div class="feature-icon" aria-hidden="true">&#128081;</div>
       <div class="feature-title">لوحة النتائج</div>
       <p class="feature-desc">عرض احتفالي للفائز مع ترتيب جميع الفرق وتأثير الكونفيتي عند انتهاء اللعبة</p>
     </div>
     <div class="feature-card reveal reveal-delay-5">
-      <div class="feature-icon">🛡️</div>
+      <div class="feature-icon" aria-hidden="true">&#128737;&#65039;</div>
       <div class="feature-title">وضع المشرف</div>
       <p class="feature-desc">تحكم كامل للمشرف في الأسئلة والفئات واللاعبين مع حماية برمز سري</p>
     </div>
     <div class="feature-card reveal reveal-delay-6">
-      <div class="feature-icon">🌙</div>
+      <div class="feature-icon" aria-hidden="true">&#127769;</div>
       <div class="feature-title">تصميم أنيق</div>
       <p class="feature-desc">واجهة ذهبية داكنة فاخرة مصممة للعب في التجمعات العائلية والأمسيات</p>
     </div>
@@ -894,39 +946,55 @@
 <section id="categories">
   <span class="section-label reveal">الفئات</span>
   <div class="section-title reveal reveal-delay-1">ماذا ستلعب اليوم؟</div>
-  <p class="section-sub reveal reveal-delay-2">8 فئات متنوعة تناسب جميع الأعمار والاهتمامات</p>
+  <p class="section-sub reveal reveal-delay-2">20 فئة متنوعة تناسب جميع الأعمار والاهتمامات — اختر 6 فئات لكل جولة</p>
   <div class="categories-grid">
     <div class="cat-card reveal reveal-delay-1" style="border-color:rgba(30,144,255,0.3)">
-      <span class="cat-icon">🌍</span>
+      <span class="cat-icon" role="img" aria-label="كرة أرضية">&#127758;</span>
       <div class="cat-name">جغرافيا</div>
     </div>
-    <div class="cat-card reveal reveal-delay-2" style="border-color:rgba(255,140,0,0.3)">
-      <span class="cat-icon">🚩</span>
-      <div class="cat-name">أعلام</div>
+    <div class="cat-card reveal reveal-delay-2" style="border-color:rgba(102,187,106,0.3)">
+      <span class="cat-icon" role="img" aria-label="أعلام">&#127988;</span>
+      <div class="cat-name">أعلام الدول</div>
     </div>
-    <div class="cat-card reveal reveal-delay-3" style="border-color:rgba(50,205,50,0.3)">
-      <span class="cat-icon">🐾</span>
+    <div class="cat-card reveal reveal-delay-3" style="border-color:rgba(255,167,38,0.3)">
+      <span class="cat-icon" role="img" aria-label="حيوانات">&#128054;</span>
       <div class="cat-name">حيوانات</div>
     </div>
     <div class="cat-card reveal reveal-delay-4" style="border-color:rgba(255,20,147,0.3)">
-      <span class="cat-icon">🎵</span>
+      <span class="cat-icon" role="img" aria-label="موسيقى">&#127925;</span>
       <div class="cat-name">موسيقى</div>
     </div>
-    <div class="cat-card reveal reveal-delay-1" style="border-color:rgba(212,168,67,0.4)">
-      <span class="cat-icon">👁️</span>
-      <div class="cat-name">خمّن من العيون</div>
+    <div class="cat-card reveal reveal-delay-1" style="border-color:rgba(0,217,255,0.3)">
+      <span class="cat-icon" role="img" aria-label="رياضة">&#9917;</span>
+      <div class="cat-name">رياضة</div>
     </div>
-    <div class="cat-card reveal reveal-delay-2" style="border-color:rgba(147,112,219,0.35)">
-      <span class="cat-icon">⭐</span>
-      <div class="cat-name">مشاهير</div>
-    </div>
-    <div class="cat-card reveal reveal-delay-3" style="border-color:rgba(0,206,209,0.3)">
-      <span class="cat-icon">🔬</span>
+    <div class="cat-card reveal reveal-delay-2" style="border-color:rgba(171,71,188,0.35)">
+      <span class="cat-icon" role="img" aria-label="علوم">&#128300;</span>
       <div class="cat-name">علوم</div>
     </div>
-    <div class="cat-card reveal reveal-delay-4" style="border-color:rgba(255,69,0,0.3)">
-      <span class="cat-icon">⚽</span>
-      <div class="cat-name">رياضة</div>
+    <div class="cat-card reveal reveal-delay-3" style="border-color:rgba(236,64,122,0.3)">
+      <span class="cat-icon" role="img" aria-label="أفلام">&#127916;</span>
+      <div class="cat-name">أفلام ومسلسلات</div>
+    </div>
+    <div class="cat-card reveal reveal-delay-4" style="border-color:rgba(63,81,181,0.35)">
+      <span class="cat-icon" role="img" aria-label="مشاهير">&#11088;</span>
+      <div class="cat-name">شخصيات مشهورة</div>
+    </div>
+    <div class="cat-card reveal reveal-delay-1" style="border-color:rgba(96,125,139,0.3)">
+      <span class="cat-icon" role="img" aria-label="سيارات">&#128663;</span>
+      <div class="cat-name">سيارات</div>
+    </div>
+    <div class="cat-card reveal reveal-delay-2" style="border-color:rgba(76,175,80,0.3)">
+      <span class="cat-icon" role="img" aria-label="مسجد">&#128332;</span>
+      <div class="cat-name">ثقافة إسلامية</div>
+    </div>
+    <div class="cat-card reveal reveal-delay-3" style="border-color:rgba(255,109,0,0.3)">
+      <span class="cat-icon" role="img" aria-label="لوحة فنية">&#127912;</span>
+      <div class="cat-name">فنون</div>
+    </div>
+    <div class="cat-card reveal reveal-delay-4" style="border-color:rgba(255,193,7,0.3)">
+      <span class="cat-icon" role="img" aria-label="مفتاح كهربائي">&#128161;</span>
+      <div class="cat-name">اختراعات</div>
     </div>
   </div>
 </section>
@@ -943,7 +1011,7 @@
       <div class="step-num">1</div>
       <div class="step-text">
         <h3>اختر الفئات</h3>
-        <p>اختر 6 فئات من الفئات المتاحة — كل فئة ستحتوي على أسئلة من ثلاثة مستويات صعوبة</p>
+        <p>اختر 6 فئات من بين 20 فئة متاحة — كل فئة تحتوي على أسئلة متنوعة بين النصوص والصور</p>
       </div>
     </div>
     <div class="step reveal reveal-delay-2">
@@ -957,14 +1025,14 @@
       <div class="step-num">3</div>
       <div class="step-text">
         <h3>اختر سؤالاً</h3>
-        <p>تناوب الفرق على اختيار فئة ومستوى صعوبة — السؤال الأصعب يعطي نقاطاً أكثر</p>
+        <p>تناوب الفرق على اختيار فئة — الأسئلة لا تتكرر أبداً حتى لو لعبت مرات عديدة</p>
       </div>
     </div>
     <div class="step reveal reveal-delay-4">
       <div class="step-num">4</div>
       <div class="step-text">
         <h3>أجب واربح النقاط</h3>
-        <p>اضغط "عرض الإجابة" للكشف عنها — المشرف يختار من أجاب صح ويمنحه النقاط تلقائياً</p>
+        <p>اضغط "عرض الإجابة" للكشف عنها — المشرف يختار من أجاب صحيحاً ويمنحه النقاط تلقائياً</p>
       </div>
     </div>
   </div>
@@ -972,20 +1040,20 @@
 
 <!-- DOWNLOAD -->
 <div class="download-section" id="download">
-  <span class="download-emoji">📲</span>
+  <span class="download-emoji" aria-hidden="true">&#128241;</span>
   <h2>حمّل فكر الآن</h2>
   <p>لا إعلانات، لا اشتراكات</p>
-  <a href="https://drive.google.com/uc?export=download&id=1Byq3B78SqdBP_4E5JEJpyr_AssdahEud" class="android-btn">
-    <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:#0D0D14">
+  <a href="https://drive.google.com/uc?export=download&id=1Byq3B78SqdBP_4E5JEJpyr_AssdahEud" class="android-btn" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:#0D0D14" aria-hidden="true">
       <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0001.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0225 3.503C15.5902 8.4799 13.853 7.9401 12 7.9401c-1.853 0-3.5902.5398-5.1367 1.4699L4.841 5.907a.4161.4161 0 00-.5677-.1521.4156.4156 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589.3432 18.6617h23.3136c0-4.0028-2.3457-7.475-5.7755-9.3403"/>
     </svg>
     تحميل للأندرويد
   </a>
-  <div class="download-note">يتطلب Android 6.0 أو أحدث · حجم التطبيق أقل من 50 MB</div>
+  <div class="download-note">يتطلب Android 6.0 أو أحدث &middot; حجم التطبيق أقل من 50 MB</div>
 </div>
 
 <!-- FOOTER -->
-<footer>
+<footer role="contentinfo">
   <div class="footer-logo">فكر</div>
   <div class="footer-links">
     <a href="#features">المميزات</a>
@@ -993,116 +1061,124 @@
     <a href="#howto">كيف تلعب</a>
     <a href="#download">تحميل</a>
   </div>
-  <div class="footer-copy">© 2026 فكر — جميع الحقوق محفوظة</div>
+  <div class="footer-copy">&copy; 2025 فكر — جميع الحقوق محفوظة</div>
 </footer>
 
 <script>
+// ===== REDUCED MOTION CHECK =====
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = window.innerWidth < 768;
+
 // ===== PARTICLES SYSTEM =====
-const canvas = document.getElementById('particles-canvas');
-const ctx = canvas.getContext('2d');
-let particles = [];
-let mouseX = 0, mouseY = 0;
+if (!prefersReducedMotion) {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let mouseX = 0, mouseY = 0;
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-class Particle {
-  constructor() {
-    this.reset();
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
-  reset() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 2 + 0.5;
-    this.speedX = (Math.random() - 0.5) * 0.3;
-    this.speedY = (Math.random() - 0.5) * 0.3;
-    this.opacity = Math.random() * 0.5 + 0.1;
-    this.life = Math.random() * 100 + 100;
-  }
-  update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    this.life--;
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
 
-    // Mouse interaction
-    const dx = mouseX - this.x;
-    const dy = mouseY - this.y;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    if (dist < 150) {
-      this.x -= dx * 0.01;
-      this.y -= dy * 0.01;
-    }
+  const particleCount = isMobile ? 25 : 50;
 
-    if (this.life <= 0 || this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+  class Particle {
+    constructor() {
       this.reset();
     }
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(212, 168, 67, ${this.opacity})`;
-    ctx.fill();
-  }
-}
+    reset() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.size = Math.random() * 2 + 0.5;
+      this.speedX = (Math.random() - 0.5) * 0.3;
+      this.speedY = (Math.random() - 0.5) * 0.3;
+      this.opacity = Math.random() * 0.5 + 0.1;
+      this.life = Math.random() * 100 + 100;
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      this.life--;
 
-// Create particles
-for (let i = 0; i < 60; i++) {
-  particles.push(new Particle());
-}
-
-// Draw connections
-function drawConnections() {
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
+      const dx = mouseX - this.x;
+      const dy = mouseY - this.y;
       const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 120) {
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = `rgba(212, 168, 67, ${0.08 * (1 - dist/120)})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
+      if (dist < 150) {
+        this.x -= dx * 0.01;
+        this.y -= dy * 0.01;
+      }
+
+      if (this.life <= 0 || this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+        this.reset();
+      }
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(212, 168, 67, ' + this.opacity + ')';
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < particleCount; i++) {
+    particles.push(new Particle());
+  }
+
+  function drawConnections() {
+    if (isMobile) return;
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(212, 168, 67, ' + (0.08 * (1 - dist/120)) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
       }
     }
   }
-}
 
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => { p.update(); p.draw(); });
-  drawConnections();
-  requestAnimationFrame(animateParticles);
-}
-animateParticles();
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(function(p) { p.update(); p.draw(); });
+    drawConnections();
+    requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
 
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-});
+  document.addEventListener('mousemove', function(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+} else {
+  document.getElementById('particles-canvas').style.display = 'none';
+}
 
 // ===== SCROLL REVEAL =====
-const revealElements = document.querySelectorAll('.reveal');
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
+var revealElements = document.querySelectorAll('.reveal');
+var revealObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
     if (entry.isIntersecting) {
       entry.target.classList.add('active');
     }
   });
 }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-revealElements.forEach(el => revealObserver.observe(el));
+revealElements.forEach(function(el) { revealObserver.observe(el); });
 
 // ===== SMOOTH SCROLL =====
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
   anchor.addEventListener('click', function(e) {
     e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
+    var target = document.querySelector(this.getAttribute('href'));
     if (target) {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -1110,10 +1186,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ===== NAV SCROLL EFFECT =====
-let lastScroll = 0;
-const nav = document.querySelector('nav');
-window.addEventListener('scroll', () => {
-  const currentScroll = window.pageYOffset;
+var nav = document.querySelector('nav');
+window.addEventListener('scroll', function() {
+  var currentScroll = window.pageYOffset;
   if (currentScroll > 100) {
     nav.style.background = 'rgba(13,13,20,0.95)';
     nav.style.boxShadow = '0 4px 30px rgba(0,0,0,0.3)';
@@ -1121,47 +1196,50 @@ window.addEventListener('scroll', () => {
     nav.style.background = 'rgba(13,13,20,0.85)';
     nav.style.boxShadow = 'none';
   }
-  lastScroll = currentScroll;
 });
 
 // ===== COUNTER ANIMATION =====
-const counters = document.querySelectorAll('.stat-number[data-target]');
-const counterObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const target = parseInt(entry.target.dataset.target);
-      const duration = 2000;
-      const start = performance.now();
-      const initialText = entry.target.textContent;
-      const hasPlus = initialText.includes('+');
+if (!prefersReducedMotion) {
+  var counters = document.querySelectorAll('.stat-number[data-target]');
+  var counterObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var target = parseInt(entry.target.dataset.target);
+        var duration = 2000;
+        var start = performance.now();
+        var initialText = entry.target.textContent;
+        var hasPlus = initialText.includes('+');
 
-      function updateCounter(currentTime) {
-        const elapsed = currentTime - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const easeOut = 1 - Math.pow(1 - progress, 3);
-        const current = Math.floor(easeOut * target);
-        entry.target.textContent = (hasPlus ? '+' : '') + current;
-        if (progress < 1) {
-          requestAnimationFrame(updateCounter);
-        } else {
-          entry.target.textContent = initialText;
+        function updateCounter(currentTime) {
+          var elapsed = currentTime - start;
+          var progress = Math.min(elapsed / duration, 1);
+          var easeOut = 1 - Math.pow(1 - progress, 3);
+          var current = Math.floor(easeOut * target);
+          entry.target.textContent = (hasPlus ? '+' : '') + current;
+          if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+          } else {
+            entry.target.textContent = initialText;
+          }
         }
+        requestAnimationFrame(updateCounter);
+        counterObserver.unobserve(entry.target);
       }
-      requestAnimationFrame(updateCounter);
-      counterObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.5 });
+    });
+  }, { threshold: 0.5 });
 
-counters.forEach(counter => counterObserver.observe(counter));
+  counters.forEach(function(counter) { counterObserver.observe(counter); });
+}
 
 // ===== PARALLAX HERO =====
-const hero = document.querySelector('.hero');
-window.addEventListener('scroll', () => {
-  const scrolled = window.pageYOffset;
-  const rate = scrolled * 0.3;
-  hero.style.backgroundPositionY = `${rate}px`;
-});
+if (!prefersReducedMotion) {
+  var hero = document.querySelector('.hero');
+  window.addEventListener('scroll', function() {
+    var scrolled = window.pageYOffset;
+    var rate = scrolled * 0.3;
+    hero.style.backgroundPositionY = rate + 'px';
+  });
+}
 </script>
 
 </body>
